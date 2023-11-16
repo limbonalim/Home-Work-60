@@ -6,10 +6,10 @@ interface Props {
   message: string;
 }
 
-const MemoMessage:React.FC<Props> = React.memo(function Message ({auhtor, date, message})  {
+const MemoMessage: React.FC<Props> = React.memo(function Message({auhtor, date, message}) {
   return (
-    <div className="alert alert-secondary p-0" role="alert">
-      <div className="d-flex justify-content-between border-bottom border-black px-2 pt-1">
+    <div className="alert alert-success p-0" role="alert">
+      <div className="d-flex justify-content-between border-bottom border-primary px-2 pt-1">
         <span>{auhtor}</span>
         <span>{date}</span>
       </div>
@@ -20,6 +20,6 @@ const MemoMessage:React.FC<Props> = React.memo(function Message ({auhtor, date, 
   );
 }, (prevProps, nextProps) => {
   return (prevProps.message === nextProps.message) && (prevProps.date === nextProps.date) && (prevProps.auhtor === nextProps.auhtor);
-})
+});
 
 export default MemoMessage;

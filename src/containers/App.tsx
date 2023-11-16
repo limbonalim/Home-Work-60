@@ -1,26 +1,35 @@
 import {useEffect, useState} from 'react';
-import Message from '../components/Message.tsx';
+import MemoMessage from '../components/Message/Message.tsx';
 import {MessageType} from '../types.d..ts';
+import SpinnerMemo from '../components/Spinner/Spinner.tsx';
 
 const url = 'http://146.185.154.90:8000/messages';
 
 const App = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
+  const [showSpinner, setShowSpinner] = useState<boolean>(false);
 
   useEffect(() => {
     const getData = async () => {
-      const response: Response = await fetch(url);
-      if (response.ok) {
-        const messages: MessageType[] = await response.json();
-        setMessages(messages);
+      try {
+        setShowSpinner(true);
+        const response: Response = await fetch(url);
+        if (response.ok) {
+          const messages: MessageType[] = await response.json();
+          setMessages(messages);
+        }
+        setShowSpinner(false);
+      } catch (e: Error) {
+        alert(e);
       }
+
     };
 
     void getData();
   }, []);
 
-  const listOfMessages: Message[] = messages.map((message) =>
-    <Message
+  const listOfMessages: MemoMessage[] = messages.map((message) =>
+    <MemoMessage
       key={message._id}
       auhtor={message.author}
       message={message.message}
@@ -30,6 +39,7 @@ const App = () => {
   return (
     <>
       <div className="d-flex flex-column-reverse">
+        <SpinnerMemo show={showSpinner}/>
         {listOfMessages}
       </div>
     </>

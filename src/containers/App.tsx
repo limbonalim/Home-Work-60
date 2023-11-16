@@ -1,7 +1,8 @@
 import {useEffect, useState} from 'react';
 import MemoMessage from '../components/Message/Message.tsx';
-import {MessageType} from '../types.d..ts';
-import SpinnerMemo from '../components/Spinner/Spinner.tsx';
+import {MessageFormType, MessageType} from '../types.d..ts';
+import MemoSpinner from '../components/Spinner/Spinner.tsx';
+import MemoSendForm from '../components/SendForm/SendForm.tsx';
 
 const url = 'http://146.185.154.90:8000/messages';
 
@@ -28,6 +29,18 @@ const App = () => {
     void getData();
   }, []);
 
+  const onSubmit = async (message: MessageFormType) => {
+    console.log(message);
+    const data: URLSearchParams = new URLSearchParams();
+    data.set('message', message.message);
+    data.set('author', message.auhtor);
+
+    const response: Response = await fetch(url, {
+      method: 'post',
+      body: data,
+    });
+  };
+
   const listOfMessages: MemoMessage[] = messages.map((message) =>
     <MemoMessage
       key={message._id}
@@ -38,8 +51,9 @@ const App = () => {
 
   return (
     <>
+      <MemoSendForm onSubmit={onSubmit}/>
       <div className="d-flex flex-column-reverse">
-        <SpinnerMemo show={showSpinner}/>
+        <MemoSpinner show={showSpinner}/>
         {listOfMessages}
       </div>
     </>

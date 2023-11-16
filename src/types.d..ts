@@ -4,3 +4,8 @@ export interface MessageType {
   datetime: string;
   author: string;
 }
+
+export interface MessageFormType {
+  auhtor: string;
+  message: string;
+}

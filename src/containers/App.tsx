@@ -1,7 +1,9 @@
+import Message from '../components/Message.tsx';
+
 const App = () => {
   return (
     <>
-      <div className="text-bg-primary">Hello</div>
+      <Message auhtor='Admin' message='TEST' date='12.23.32'/>
     </>
   );
 };

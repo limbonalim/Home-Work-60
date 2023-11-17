@@ -4,14 +4,17 @@ import {MessageFormType, MessageType} from '../types.d..ts';
 import MemoSpinner from '../components/Spinner/Spinner.tsx';
 import MemoSendForm from '../components/SendForm/SendForm.tsx';
 import FormatDate from '../components/FormatDate/FormatDate.ts';
+import Alert from '../components/Alert/Alert.tsx';
 
 const baseUrl = (time: string = ''): string => `http://146.185.154.90:8000/messages${time}`;
 let lastMessageTime: string = '';
 let interval: number;
+let error: string;
 
 const App = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [showSpinner, setShowSpinner] = useState<boolean>(false);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
 
   useEffect(() => {
     const run = async () => {
@@ -45,7 +48,8 @@ const App = () => {
         }
       }
     } catch (e: Error) {
-      alert(e.message);
+      error = e.message;
+      setShowAlert(true);
     }
   };
 
@@ -65,6 +69,10 @@ const App = () => {
 
   };
 
+  const closeAlert = () => {
+    setShowAlert(false);
+  };
+
   const listOfMessages: MemoMessage[] = messages.map((message) => {
     const date = new FormatDate(message.datetime);
     return (<MemoMessage
@@ -77,10 +85,17 @@ const App = () => {
 
   return (
     <>
-      <MemoSendForm onSubmit={onSubmit}/>
-      <div className="d-flex flex-column-reverse">
-        <MemoSpinner show={showSpinner}/>
-        {listOfMessages}
+      <div className="px-2">
+        <Alert
+          type="danger"
+          showWindow={showAlert}
+          clickDismissable={closeAlert}
+        >{error}</Alert>
+        <MemoSendForm onSubmit={onSubmit}/>
+        <div className="d-flex flex-column-reverse">
+          <MemoSpinner show={showSpinner}/>
+          {listOfMessages}
+        </div>
       </div>
     </>
   );

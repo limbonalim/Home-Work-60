@@ -1,10 +1,11 @@
 import React from 'react';
+import {Spinner} from 'react-bootstrap';
 
 interface Props {
   show: boolean;
 }
 
-const SpinnerMemo: React.FC<Props> = React.memo(function Spinner({show}) {
+const SpinnerMemo: React.FC<Props> = React.memo(function SpinnerMemo({show}) {
   const visible: React.CSSProperties = {
     display: 'none',
   };
@@ -14,10 +15,9 @@ const SpinnerMemo: React.FC<Props> = React.memo(function Spinner({show}) {
   return (
     <div
       style={visible}
-      className="spinner-border text-primary mx-auto my-3"
-      role="status"
+      className="mx-auto my-3"
     >
-      <span className="visually-hidden">Loading...</span>
+      <Spinner animation="grow" variant="primary"/>
     </div>
   );
 }, (prevProps, nextProps) => {

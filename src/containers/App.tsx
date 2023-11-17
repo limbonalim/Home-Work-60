@@ -1,20 +1,21 @@
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
+import {Alert} from 'react-bootstrap';
 import MemoMessage from '../components/Message/Message.tsx';
-import {MessageFormType, MessageType} from '../types.d..ts';
 import MemoSpinner from '../components/Spinner/Spinner.tsx';
 import MemoSendForm from '../components/SendForm/SendForm.tsx';
 import FormatDate from '../components/FormatDate/FormatDate.ts';
-import Alert from '../components/Alert/Alert.tsx';
+import {MessageFormType, MessageType} from '../types.d..ts';
+
 
 const baseUrl = (time: string = ''): string => `http://146.185.154.90:8000/messages${time}`;
-let lastMessageTime: string = '';
 let interval: number;
-let error: string;
 
 const App = () => {
   const [messages, setMessages] = useState<MessageType[]>([]);
+  const [lastMessageTime, setLastMessageTime] = useState<string>('');
   const [showSpinner, setShowSpinner] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     const run = async () => {
@@ -27,7 +28,7 @@ const App = () => {
     };
 
     void run();
-  }, []);
+  }, [lastMessageTime]);
 
   const getData = async (url: string) => {
     try {
@@ -35,7 +36,7 @@ const App = () => {
       if (response.ok) {
         const data: MessageType[] = await response.json();
         if (data.length !== 0) {
-          lastMessageTime = `?datetime=${data[data.length - 1].datetime}`;
+          setLastMessageTime(`?datetime=${data[data.length - 1].datetime}`);
           setMessages(prevState => {
             let allMessages: MessageType[];
             if (url === baseUrl()) {
@@ -48,7 +49,7 @@ const App = () => {
         }
       }
     } catch (e: Error) {
-      error = e.message;
+      setError(e.message);
       setShowAlert(true);
     }
   };
@@ -63,14 +64,6 @@ const App = () => {
       method: 'post',
       body: data,
     });
-    interval = setInterval(() => {
-      void getData(baseUrl(lastMessageTime));
-    }, 3000);
-
-  };
-
-  const closeAlert = () => {
-    setShowAlert(false);
   };
 
   const listOfMessages: MemoMessage[] = messages.map((message) => {
@@ -87,9 +80,10 @@ const App = () => {
     <>
       <div className="px-2">
         <Alert
-          type="danger"
-          showWindow={showAlert}
-          clickDismissable={closeAlert}
+          variant="danger"
+          onClose={() => setShowAlert(false)}
+          show={showAlert}
+          dismissible
         >{error}</Alert>
         <MemoSendForm onSubmit={onSubmit}/>
         <div className="d-flex flex-column-reverse">

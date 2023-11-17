@@ -3,6 +3,7 @@ import MemoMessage from '../components/Message/Message.tsx';
 import {MessageFormType, MessageType} from '../types.d..ts';
 import MemoSpinner from '../components/Spinner/Spinner.tsx';
 import MemoSendForm from '../components/SendForm/SendForm.tsx';
+import FormatDate from '../components/FormatDate/FormatDate.ts';
 
 const baseUrl = (time: string = ''): string => `http://146.185.154.90:8000/messages${time}`;
 let lastMessageTime: string = '';
@@ -62,13 +63,15 @@ const App = () => {
     });
   };
 
-  const listOfMessages: MemoMessage[] = messages.map((message) =>
-    <MemoMessage
+  const listOfMessages: MemoMessage[] = messages.map((message) => {
+    const date = new FormatDate(message.datetime);
+    return (<MemoMessage
       key={message._id}
       auhtor={message.author}
       message={message.message}
-      date={message.datetime}
+      date={date.getDate()}
     />);
+  });
 
   return (
     <>
